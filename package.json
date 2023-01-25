@@ -14,10 +14,15 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
+    "customEditors": [
       {
-        "command": "sound-editor.helloWorld",
-        "title": "Hello World"
+        "viewType": "SoundEditor.CoreSoundEditor",
+        "displayName": "Sound Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.wav"
+          }
+        ]
       }
     ]
   },

@@ -192,7 +192,7 @@ export class SoundEditorProvider implements vscode.CustomEditorProvider<SoundDoc
 			});
 	}
 
-	private static readonly viewType = 'catCustoms.pawDraw';
+	private static readonly viewType = 'SoundEditor.CoreSoundEditor';
 
 	/**
 	 * Tracks all known webviews
