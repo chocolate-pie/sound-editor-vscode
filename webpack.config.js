@@ -47,9 +47,9 @@ const extensionConfig = {
 };
 /** @type WebpackConfig */
 const clientExtensionConfig = {
-  target: "browser",
+  target: "web",
   mode: "none",
-  devtool: 'no-sources-source-map',
+  devtool: 'nosources-source-map',
   module: {
     rules: [
       {

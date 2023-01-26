@@ -4,8 +4,7 @@ import { getNonce } from './util';
 
 
 interface SoundEdit {
-	readonly color: string;
-	readonly stroke: ReadonlyArray<[number, number]>;
+	readonly channel: ReadonlyArray<number>;
 }
 
 interface SoundDocumentDelegate {
@@ -306,7 +305,9 @@ export class SoundEditorProvider implements vscode.CustomEditorProvider<SoundDoc
 
 	private getHtmlForWebview(webview: vscode.Webview): string {
 		
-
+        const scriptMainUri = webview.asWebviewUri(vscode.Uri.joinPath(
+			this._context.extensionUri, 'dist', 'client', 'client.js'
+		));
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
 
@@ -326,6 +327,7 @@ export class SoundEditorProvider implements vscode.CustomEditorProvider<SoundDoc
 			</head>
 			<body>
 				<p>hello</p>
+				<script src="${scriptMainUri}" nonce="${nonce}" ></script>
 			</body>
 			</html>`;
 	}
