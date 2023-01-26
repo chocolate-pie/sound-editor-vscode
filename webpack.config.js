@@ -45,4 +45,32 @@ const extensionConfig = {
     level: "log", // enables logging required for problem matchers
   },
 };
-module.exports = [ extensionConfig ];
+/** @type WebpackConfig */
+const clientExtensionConfig = {
+  target: "browser",
+  mode: "none",
+  devtool: 'no-sources-source-map',
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader'
+          }
+        ]
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.ts', ".js"]
+  },
+  entry: "./src/client/index.ts",
+  output: {
+    path: path.join(__dirname, "dist", "client"),
+    filename: "client.js",
+    libraryTarget: "umd",
+  }
+};
+module.exports = [ extensionConfig, clientExtensionConfig ];
