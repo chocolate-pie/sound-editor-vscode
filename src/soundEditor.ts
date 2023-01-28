@@ -327,6 +327,7 @@ export class SoundEditorProvider implements vscode.CustomEditorProvider<SoundDoc
 			</head>
 			<body>
 				<p>hello</p>
+				<button id="fade-effect">mute</button>
 				<script src="${scriptMainUri}" nonce="${nonce}" ></script>
 			</body>
 			</html>`;

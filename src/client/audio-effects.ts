@@ -165,11 +165,12 @@ class AudioEffects {
         }
 
         this.source.start();
-
-        this.audioContext.startRendering();
-        this.audioContext.oncomplete = ({renderedBuffer}) => {
+        this.audioContext.startRendering().then((renderedBuffer) => {
+            console.log("📢 Assert Different:", this.buffer.getChannelData(0) !== renderedBuffer.getChannelData(0));
+            console.log(this.buffer.getChannelData(0));
+            console.log(renderedBuffer.getChannelData(0));
             done(renderedBuffer, this.adjustedTrimStart, this.adjustedTrimEnd);
-        };
+        });
 
     }
 }
