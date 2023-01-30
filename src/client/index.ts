@@ -152,8 +152,8 @@ type ValueOf<T> = T[keyof T];
       }
     }
   });
-  document.getElementById("fade-effect")!.addEventListener("click", () => {
+ /* document.getElementById("fade-effect")!.addEventListener("click", () => {
     editor.effectFactory(AudioEffects.effectTypes.FADEOUT)();
-  });
+  }); */
   vscode.postMessage({ type: "ready" });
 })();

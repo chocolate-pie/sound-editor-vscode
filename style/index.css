@@ -1,0 +1,90 @@
+.container {
+    width: calc(100% - 100px);
+    height: calc(100% - 100px);
+    max-height: 350px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.button-zone {
+    width: 100%;
+    height: 65px;
+    position: absolute;
+    bottom: 0;
+    left:0;
+}
+
+.play-button {
+    height: 100%;
+    aspect-ratio: 1;
+    left:  0;
+    bottom: 0;
+    position: absolute;
+    background-color: #CF63CF;
+    border-radius: 100%;
+}
+
+.play-button > img {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.effect-button-container {
+    position: absolute;
+    /* aspect-ratio: 9.5; */
+    height: 100%;
+    right: 0;
+    bottom: 0;
+    width: 85%;
+   /* display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-start; */
+    overflow: scroll;
+}
+.effect-button-container-main {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    position: relative;
+    height: 100%;
+    width: min-content;
+}
+.effect-button {
+    height: 100%;
+    position: relative;
+    width: 65px;
+    border-radius: 5px;
+}
+
+.effect-button:hover {
+    background-color: #7a757545;
+    transition: .3s;
+}
+
+.effect-button > img {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+}
+
+.effect-button > p {
+    text-align: center;
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.top-zone {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 65px - 15px);
+    background-color: #e9b1e9;
+    border: solid 2px #CF63CF;
+    border-radius: 5px;
+}

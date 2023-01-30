@@ -1,3 +1,4 @@
+/// <reference path="./types.d.ts" />
 import * as vscode from "vscode";
 import { Disposable, disposeAll } from "./dispose";
 import { getNonce } from "./util";
@@ -314,6 +315,22 @@ export class SoundEditorProvider
         "client.js"
       )
     );
+	const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "style", "index.css"));
+	const muteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--mute.svg"));
+	const robotUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--robot.svg"));
+	const reverseuri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--reverse.svg"));
+	const louderUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--louder.svg"));
+	const softerUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--softer.svg"));
+	const fadeInUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--fade-in.svg"));
+	const fadeOutUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--fade-out.svg"));
+	const copyUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--copy.svg"));
+	const pasteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--paste.svg"));
+	const playUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--play.svg"));
+	const stopUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--stop.svg"));
+	const trimUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--trim.svg"));
+	const deleteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--delete.svg"));
+	const fasterUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--faster.svg"));
+	const slowerUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--slower.svg"));
     const nonce = getNonce();
 
     return /* html */ `
@@ -327,12 +344,63 @@ export class SoundEditorProvider
 				-->
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				
+				<link href="${styleMainUri}" rel="stylesheet" />
+				<script id="metadata" type="application/json">
+				    {
+						"play": "${playUri}",
+						"stop": "${stopUri}",
+					}
+				</script>
 				<title>Sound Editor</title>
 			</head>
 			<body>
-				<p>hello</p>
-				<button id="fade-effect">mute</button>
+				<div class="container">
+				    <span class="top-zone">
+					     <span class="control-top-zone">
+						 </span>
+					</span>
+				    <span class="button-zone">
+					<span class="play-button">
+					     <img src="${playUri}" />
+					</span>
+					<span class="effect-button-container">
+					<span class="effect-button-container-main">
+					     <span class="effect-button">
+						        <img src="${fadeInUri}" />
+								<p>mute</p>
+			             </span>
+						 <span class="effect-button">
+						        <img src="${fadeOutUri}" />
+								<p>fade out</p>
+			             </span>
+						 <span class="effect-button">
+							    <img src="${louderUri}" />
+								<p>louder</p>
+						 </span>
+						 <span class="effect-button">
+							    <img src="${softerUri}" />
+								<p>softer</p>
+						 </span>
+						 <span class="effect-button">
+							    <img src="${fasterUri}" />
+								<p>faster</p>
+						 </span>
+						 <span class="effect-button">
+							    <img src="${slowerUri}" />
+								<p>slower</p>
+						 </span>
+						 <span class="effect-button">
+							    <img src="${robotUri}" />
+								<p>robot</p>
+						 </span>
+						 <span class="effect-button">
+							    <img src="${muteUri}" />
+								<p>mute</p>
+						 </span>
+				    </span>
+					</span>
+					</span>
+				</div>
 				<script src="${scriptMainUri}" nonce="${nonce}" ></script>
 			</body>
 			</html>`;
