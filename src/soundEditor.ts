@@ -2,6 +2,7 @@
 import * as vscode from "vscode";
 import { Disposable, disposeAll } from "./dispose";
 import { getNonce } from "./util";
+import { width, height } from "./client/peak-analyzer";
 
 interface SoundEdit {
   readonly channel: ReadonlyArray<number>;
@@ -318,7 +319,7 @@ export class SoundEditorProvider
 	const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "style", "index.css"));
 	const muteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--mute.svg"));
 	const robotUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--robot.svg"));
-	const reverseuri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--reverse.svg"));
+	const reverseUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--reverse.svg"));
 	const louderUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--louder.svg"));
 	const softerUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--softer.svg"));
 	const fadeInUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--fade-in.svg"));
@@ -331,6 +332,7 @@ export class SoundEditorProvider
 	const deleteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--delete.svg"));
 	const fasterUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--faster.svg"));
 	const slowerUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--slower.svg"));
+  const echoUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--echo.svg"));
     const nonce = getNonce();
 
     return /* html */ `
@@ -348,7 +350,7 @@ export class SoundEditorProvider
 				<script id="metadata" type="application/json">
 				    {
 						"play": "${playUri}",
-						"stop": "${stopUri}",
+						"stop": "${stopUri}"
 					}
 				</script>
 				<title>Sound Editor</title>
@@ -356,8 +358,20 @@ export class SoundEditorProvider
 			<body>
 				<div class="container">
 				    <span class="top-zone">
-					     <span class="control-top-zone">
+					     <svg id="draw-canvas" viewBox="0 0 ${width} ${height}">
+                   <g transform="scale(1, -1) translate(0, -${height / 2})">
+                        <path
+                           d="M 0 0"
+                           id="draw-path"
+                           strokeLinejoin="round"
+                           strokeWidth="1"
+                        />
+                   </g>
+               </svg>
 						 </span>
+					     <span class="control-top-zone">
+                   <span id="play-head"></span>
+						   </span>
 					</span>
 				    <span class="button-zone">
 					<span class="play-button">
@@ -365,37 +379,45 @@ export class SoundEditorProvider
 					</span>
 					<span class="effect-button-container">
 					<span class="effect-button-container-main">
-					     <span class="effect-button">
+					     <span class="effect-button" id="fade-in-effect">
 						        <img src="${fadeInUri}" />
 								<p>mute</p>
 			             </span>
-						 <span class="effect-button">
+						 <span class="effect-button" id="fade-out-effect">
 						        <img src="${fadeOutUri}" />
 								<p>fade out</p>
 			             </span>
-						 <span class="effect-button">
+						 <span class="effect-button" id="louder-effect">
 							    <img src="${louderUri}" />
 								<p>louder</p>
 						 </span>
-						 <span class="effect-button">
+						 <span class="effect-button" id="softer-effect">
 							    <img src="${softerUri}" />
 								<p>softer</p>
 						 </span>
-						 <span class="effect-button">
+						 <span class="effect-button" id="faster-effect">
 							    <img src="${fasterUri}" />
 								<p>faster</p>
 						 </span>
-						 <span class="effect-button">
+						 <span class="effect-button" id="slower-effect">
 							    <img src="${slowerUri}" />
 								<p>slower</p>
 						 </span>
-						 <span class="effect-button">
+						 <span class="effect-button" id="robot-effect">
 							    <img src="${robotUri}" />
 								<p>robot</p>
 						 </span>
-						 <span class="effect-button">
+						 <span class="effect-button" id="mute-effect">
 							    <img src="${muteUri}" />
 								<p>mute</p>
+						 </span>
+             <span class="effect-button" id="echo-effect">
+							    <img src="${echoUri}" />
+								<p>echo</p>
+						 </span>
+             <span class="effect-button" id="reverse-effect">
+							    <img src="${reverseUri}" />
+								<p>reverse</p>
 						 </span>
 				    </span>
 					</span>

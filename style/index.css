@@ -31,6 +31,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: 60%;
 }
 
 .effect-button-container {
@@ -87,4 +88,39 @@
     background-color: #e9b1e9;
     border: solid 2px #CF63CF;
     border-radius: 5px;
+}
+
+#draw-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#draw-path {
+    fill: hsl(300, 54%, 72%);
+    stroke: hsla(300, 48%, 50%, 1);
+}
+
+.control-top-zone {
+    width: 100%;
+    height: calc(100% - 65px - 15px);
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#play-head {
+    width: 0px;
+    height: 100%;
+    border-left: 1px solid #c456c4;
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
+    z-index: 9999;
+    opacity: 0;
+    position:absolute;
+    top: 0px;
+    left: 0px;
 }

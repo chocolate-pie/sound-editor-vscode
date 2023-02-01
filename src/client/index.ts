@@ -2,8 +2,10 @@
 /// <reference path="./../types.d.ts" />
 import AudioBufferPlayer from "./audio-buffer-player";
 import AudioEffects from "./audio-effects";
+import { analyze } from "./peak-analyzer";
+import { computeChunkedRMS } from "./utils/audio-utils";
 import * as WavEncoder from "./wav-encoder";
-
+const MIN_LENGTH = 0.01;
 type ValueOf<T> = T[keyof T];
 (() => {
   const vscode = acquireVsCodeApi();
@@ -14,6 +16,8 @@ type ValueOf<T> = T[keyof T];
       trimStart: number | null;
       trimEnd: number | null;
       playHead: number | null;
+      chunkLevels: null | number[],
+      isTrimmerMouseDown: boolean;
     };
     constructor() {
       this.context = new AudioContext();
@@ -22,7 +26,12 @@ type ValueOf<T> = T[keyof T];
         trimStart: null,
         trimEnd: null,
         playHead: null,
+        chunkLevels: null,
+        isTrimmerMouseDown: false,
       };
+    }
+    get metadata () {
+      return JSON.parse(document.getElementById("metadata")!.innerText);
     }
     init(initAudioData: Uint8Array) {
       this.context.decodeAudioData(initAudioData.buffer).then((buffer) => {
@@ -30,12 +39,27 @@ type ValueOf<T> = T[keyof T];
           buffer.getChannelData(0),
           buffer.sampleRate
         );
+        this.state = {
+          ...this.state,
+          chunkLevels: computeChunkedRMS(buffer.getChannelData(0)),
+        };
+        analyze(this.state.chunkLevels!, (document.getElementById("draw-path") as any));
       });
     }
     update(data: any) {
-      this.audioBufferPlayer?.buffer
-        .getChannelData(0)
-        .set(new Float32Array(data.channel));
+      if (typeof data.channel === "undefined") {
+        return;
+      }
+      const newBuffer = this.context.createBuffer(1, data.channel.length, this.audioBufferPlayer!.buffer.sampleRate);
+      newBuffer.getChannelData(0).set(data.channel);
+      this.audioBufferPlayer!.buffer = newBuffer;
+      //  .getChannelData(0)
+      //  .set(new Float32Array(data.channel));
+        this.state = {
+          ...this.state,
+          chunkLevels: computeChunkedRMS(this.audioBufferPlayer!.buffer.getChannelData(0)),
+        };
+      analyze(this.state.chunkLevels!, (document.getElementById("draw-path") as any));
     }
     handlePlay() {
       this.audioBufferPlayer!.stop();
@@ -51,12 +75,16 @@ type ValueOf<T> = T[keyof T];
         ...this.state,
         playHead,
       };
+      document.getElementById("play-head")!.style.left = `${100 * this.state.playHead!}%`;
+      document.getElementById("play-head")!.style.opacity = "1";
     }
     handleStoppedPlaying() {
       this.state = {
         ...this.state,
         playHead: null,
       };
+      document.getElementById("play-head")!.style.opacity = "0";
+      console.log("stopped");
     }
     handleStopPlaying() {
       this.audioBufferPlayer!.stop();
@@ -80,11 +108,21 @@ type ValueOf<T> = T[keyof T];
       skipUndo = typeof skipUndo === "undefined" ? false : skipUndo;
       return new Promise((resolve) => {
         if (skipUndo === false) {
-          this.audioBufferPlayer!.buffer.getChannelData(0).set(samples);
+          // Bugzilla Error: client.js:819 Uncaught (in promise) RangeError: offset is out of bounds;
+          // @see https://bugzilla.mozilla.org/show_bug.cgi?id=1245495
+          // this.audioBufferPlayer!.buffer.getChannelData(0).set(samples);
+          const newBuffer = this.context.createBuffer(1, samples.length, sampleRate);
+          newBuffer.getChannelData(0).set(samples);
+          this.audioBufferPlayer!.buffer = newBuffer;
           vscode.postMessage({
             type: "audio",
             channel: Array.from(samples),
           });
+          this.state = {
+            ...this.state,
+            chunkLevels: computeChunkedRMS(this.audioBufferPlayer!.buffer.getChannelData(0)),
+          };
+          analyze(this.state.chunkLevels!, (document.getElementById("draw-path") as any));
         }
         resolve(true);
       });
@@ -126,6 +164,25 @@ type ValueOf<T> = T[keyof T];
     effectFactory(name: ValueOf<typeof AudioEffects.effectTypes>) {
       return () => this.handleEffect(name);
     }
+    onPlayButtonClick () {
+      if (this.state.playHead !== null) {
+        this.audioBufferPlayer!.stop();
+        this.state = {
+          ...this.state,
+          playHead: null
+        };
+      } else {
+        this.handlePlay();
+      }
+    }
+    renderPlayButton () {
+      if (this.state.playHead !== null) {
+        document.querySelector(".play-button > img")?.setAttribute("src", this.metadata.stop);
+      } else {
+        document.querySelector(".play-button > img")?.setAttribute("src", this.metadata.play);
+      }
+      window.requestAnimationFrame(this.renderPlayButton.bind(this));
+    }
   }
   const editor = new SoundEditorClient();
   window.addEventListener("message", async (e) => {
@@ -133,6 +190,7 @@ type ValueOf<T> = T[keyof T];
     switch (type) {
       case "init": {
         editor.init(body.value);
+        editor.renderPlayButton();
       }
       case "update": {
         if (typeof body.edits === "undefined" || body?.length === 0) {
@@ -152,8 +210,16 @@ type ValueOf<T> = T[keyof T];
       }
     }
   });
- /* document.getElementById("fade-effect")!.addEventListener("click", () => {
-    editor.effectFactory(AudioEffects.effectTypes.FADEOUT)();
-  }); */
+  document.getElementById("fade-in-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.FADEIN)());
+  document.getElementById("fade-out-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.FADEOUT)());
+  document.getElementById("mute-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.MUTE)());
+  document.getElementById("softer-effect")!.addEventListener("click",() => editor.effectFactory(AudioEffects.effectTypes.SOFTER)());
+  document.getElementById("louder-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.LOUDER)());
+  document.getElementById("faster-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.FASTER)());
+  document.getElementById("slower-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.SLOWER)());
+  document.getElementById("echo-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.ECHO)());
+  document.getElementById("reverse-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.REVERSE)());
+  document.getElementById("robot-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.ROBOT)());
+  document.getElementsByClassName("play-button")[0].addEventListener("click", () => editor.onPlayButtonClick());
   vscode.postMessage({ type: "ready" });
 })();
