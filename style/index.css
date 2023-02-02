@@ -166,3 +166,11 @@
     opacity: inherit;
     position:absolute;
 }
+
+.effect-button {
+    cursor: pointer;
+}
+
+.play-button {
+    cursor: pointer;
+}

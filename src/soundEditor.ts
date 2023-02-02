@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { Disposable, disposeAll } from "./dispose";
 import { getNonce } from "./util";
 import { width, height } from "./client/peak-analyzer";
+import { posix } from "path";
 
 interface SoundEdit {
   readonly channel: ReadonlyArray<number>;
@@ -254,6 +255,7 @@ export class SoundEditorProvider
           this.postMessage(webviewPanel, "init", {
             untitled: true,
             editable: true,
+            path: posix.extname(document.uri.fsPath)
           });
         } else {
           const editable = vscode.workspace.fs.isWritableFileSystem(
@@ -262,6 +264,7 @@ export class SoundEditorProvider
 
           this.postMessage(webviewPanel, "init", {
             value: document.documentData,
+            path: posix.extname(document.uri.fsPath),
             editable,
           });
         }
@@ -383,6 +386,18 @@ export class SoundEditorProvider
 					</span>
 					<span class="effect-button-container">
 					<span class="effect-button-container-main">
+            <span class="effect-button" id="copy-button">
+                   <img src="${copyUri}" />
+                   <p>copy</p>
+            </span>
+            <span class="effect-button" id="paste-button">
+                   <img src="${pasteUri}" />
+                   <p>paste</p>
+            </span>
+            <span class="effect-button" id="delete-button">
+                   <img src="${deleteUri}" />
+                   <p>delete</p>
+            </span>
 					     <span class="effect-button" id="fade-in-effect">
 						        <img src="${fadeInUri}" />
 								<p>mute</p>

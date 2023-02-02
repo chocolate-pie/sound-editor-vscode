@@ -22,11 +22,16 @@ type ValueOf<T> = T[keyof T];
       playHead: number | null;
       chunkLevels: null | number[],
       isTrimmerMouseDown: boolean;
+      copyBuffer: {
+        samples: Float32Array;
+        sampleRate: number;
+      } | null
     };
     private containerState: {
       isMouseDown: boolean,
       isTrimStartRecognized: boolean
     };
+    public ext: string | undefined;
     constructor() {
       this.context = (new AudioContext()) || (new window.webkitAudioContext());
       this.audioBufferPlayer = null;
@@ -36,6 +41,7 @@ type ValueOf<T> = T[keyof T];
         playHead: null,
         chunkLevels: null,
         isTrimmerMouseDown: false,
+        copyBuffer: null,
       };
       this.containerState = {
         isMouseDown: false,
@@ -44,6 +50,13 @@ type ValueOf<T> = T[keyof T];
     }
     get metadata () {
       return JSON.parse(document.getElementById("metadata")!.innerText);
+    }
+    copyCurrentBuffer () {
+      // Cannot reliably use props.samples because it gets detached by Firefox
+      return {
+          samples: this.audioBufferPlayer!.buffer.getChannelData(0),
+          sampleRate: this.audioBufferPlayer!.buffer.sampleRate
+      };
     }
     init(initAudioData: Uint8Array) {
       this.context.decodeAudioData(initAudioData.buffer).then((buffer) => {
@@ -96,7 +109,6 @@ type ValueOf<T> = T[keyof T];
         playHead: null,
       };
       document.getElementById("play-head")!.style.opacity = "0";
-      console.log("stopped");
     }
     handleStopPlaying() {
       this.audioBufferPlayer!.stop();
@@ -162,12 +174,13 @@ type ValueOf<T> = T[keyof T];
             if (this.state.trimStart === null) {
               this.handlePlay();
             } else {
-              (this.state = {
+              this.state = {
                 ...this.state,
                 trimStart: adjustedTrimStart,
                 trimEnd: adjustedTrimEnd,
-              }),
-                this.handlePlay();
+              };
+              this.renderTrimmer();
+              this.handlePlay();
             }
           }
         });
@@ -175,6 +188,116 @@ type ValueOf<T> = T[keyof T];
     }
     effectFactory(name: ValueOf<typeof AudioEffects.effectTypes>) {
       return () => this.handleEffect(name);
+    }
+    handleCopy () {
+      this.copy();
+    }
+    handlePaste () {
+      if (this.state.copyBuffer !== null) {
+        this.paste();
+      }
+    }
+    copy () {
+      const _trimStart = this.state.trimStart === null ? 0.0 : this.state.trimStart;
+      const _trimEnd = this.state.trimEnd === null ? 1.0 : this.state.trimEnd;
+      let trimStart;
+      let trimEnd;
+      if (_trimEnd > _trimStart) {
+        trimStart = _trimStart;
+        trimEnd = _trimEnd;
+      } else {
+        trimStart = _trimEnd;
+        trimEnd = _trimStart;
+      }
+      const newCopyBuffer = this.copyCurrentBuffer();
+      const trimStartSamples = trimStart * newCopyBuffer.samples.length;
+      const trimEndSamples = trimEnd * newCopyBuffer.samples.length;
+      newCopyBuffer.samples = newCopyBuffer.samples.slice(trimStartSamples, trimEndSamples);
+
+      this.state = {
+          ...this.state,
+          copyBuffer: newCopyBuffer
+      };
+    }
+    paste () {
+      // If there's no selection, paste at the end of the sound
+      const {samples} = this.copyCurrentBuffer();
+      if (this.state.trimStart === null) {
+          const newLength = samples.length + this.state.copyBuffer!.samples.length;
+          const newSamples = new Float32Array(newLength);
+          newSamples.set(samples, 0);
+          newSamples.set(this.state.copyBuffer!.samples, samples.length);
+          this.submitNewSamples(newSamples, this.audioBufferPlayer!.buffer.sampleRate, false).then(success => {
+              if (success) {
+                  this.handlePlay();
+              }
+          });
+      } else {
+          // else replace the selection with the pasted sound
+          const trimStartSamples = this.state.trimStart * samples.length;
+          const trimEndSamples = this.state.trimEnd! * samples.length;
+          const firstPart = samples.slice(0, trimStartSamples);
+          const lastPart = samples.slice(trimEndSamples);
+          const newLength = firstPart.length + this.state.copyBuffer!.samples.length + lastPart.length;
+          const newSamples = new Float32Array(newLength);
+          newSamples.set(firstPart, 0);
+          newSamples.set(this.state.copyBuffer!.samples, firstPart.length);
+          newSamples.set(lastPart, firstPart.length + this.state.copyBuffer!.samples.length);
+
+          const trimStartSeconds = trimStartSamples / this.audioBufferPlayer!.buffer.sampleRate;
+          const trimEndSeconds = trimStartSeconds +
+              (this.state.copyBuffer!.samples.length / this.state.copyBuffer!.sampleRate);
+          const newDurationSeconds = newSamples.length / this.state.copyBuffer!.sampleRate;
+          const adjustedTrimStart = trimStartSeconds / newDurationSeconds;
+          const adjustedTrimEnd = trimEndSeconds / newDurationSeconds;
+          this.submitNewSamples(newSamples, this.audioBufferPlayer!.buffer.sampleRate, false).then(success => {
+              if (success) {
+                  this.state = {
+                      ...this.state,
+                      trimStart: adjustedTrimStart,
+                      trimEnd: adjustedTrimEnd
+                  };
+                  this.renderTrimmer();
+              }
+          });
+      }
+    }
+    handleDelete () {
+      let trimStart;
+      let trimEnd;
+      if (this.state.trimStart === null || this.state.trimEnd === null) {
+        return;
+      }
+      if (this.state.trimEnd > this.state.trimStart) {
+         trimStart = this.state.trimStart;
+         trimEnd = this.state.trimEnd;
+      } else {
+        trimStart = this.state.trimEnd;
+        trimEnd = this.state.trimStart;
+      }
+      const {samples, sampleRate} = this.copyCurrentBuffer();
+      const sampleCount = samples.length;
+      const startIndex = Math.floor(trimStart * sampleCount);
+      const endIndex = Math.floor(trimEnd * sampleCount);
+      const firstPart = samples.slice(0, startIndex);
+      const secondPart = samples.slice(endIndex, sampleCount);
+      const newLength = firstPart.length + secondPart.length;
+      let newSamples;
+      if (newLength === 0) {
+          newSamples = new Float32Array(1);
+      } else {
+          newSamples = new Float32Array(newLength);
+          newSamples.set(firstPart, 0);
+          newSamples.set(secondPart, firstPart.length);
+      }
+      this.submitNewSamples(newSamples, sampleRate).then(() => {
+          this.state = {
+              ...this.state,
+              trimStart: null,
+              trimEnd: null
+          };
+          document.getElementById("trimmer")!.style.opacity = "0";
+      });
     }
     onPlayButtonClick () {
       if (this.state.playHead !== null) {
@@ -210,7 +333,6 @@ type ValueOf<T> = T[keyof T];
     onContainerMouseUp () {
       this.containerState.isMouseDown = false;
       this.containerState.isTrimStartRecognized = false;
-      console.log(this.state);
     }
     onContainerMouseMove (e: MouseEvent) {
       if (!this.containerState.isMouseDown) {
@@ -254,6 +376,7 @@ type ValueOf<T> = T[keyof T];
       case "init": {
         editor.init(body.value);
         editor.renderPlayButton();
+        editor.ext = body.path;
       }
       case "update": {
         if (typeof body.edits === "undefined" || body?.length === 0) {
@@ -287,5 +410,8 @@ type ValueOf<T> = T[keyof T];
   document.getElementById("control-top-zone")!.addEventListener("mouseup", () => editor.onContainerMouseUp());
   document.getElementById("control-top-zone")!.addEventListener("mousemove", (e) => editor.onContainerMouseMove(e as MouseEvent));
   document.getElementsByClassName("play-button")[0].addEventListener("click", () => editor.onPlayButtonClick());
+  document.getElementById("copy-button")!.addEventListener("click", () => editor.handleCopy());
+  document.getElementById("paste-button")!.addEventListener("click", () => editor.handlePaste());
+  document.getElementById("delete-button")!.addEventListener("click", () => editor.handleDelete());
   vscode.postMessage({ type: "ready" });
 })();
