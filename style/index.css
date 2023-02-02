@@ -103,7 +103,7 @@
     stroke: hsla(300, 48%, 50%, 1);
 }
 
-.control-top-zone {
+#control-top-zone {
     width: 100%;
     height: calc(100% - 65px - 15px);
     position: absolute;
@@ -123,4 +123,46 @@
     position:absolute;
     top: 0px;
     left: 0px;
+}
+
+#trimmer {
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    opacity: 0;
+    top: 0px;
+    width: 50px; /* default */
+    background-color:#cf68cf75;
+    z-index: 500;
+    pointer-events: none;
+}
+
+#left-handle {
+    top: 0px;
+    left: 0px;
+    width: 0px;
+    position: absolute;
+    height: 100%;
+    border-left: 1px solid #c456c4;
+    border-right: 1px solid #c456c4;
+    border-top: none;
+    border-bottom: none;
+    pointer-events: none;
+    z-index: 888;
+    opacity: inherit;
+}
+
+#right-handle {
+    top: 0px;
+    right: 0px;
+    width: 0px;
+    height: 100%;
+    border-left: 1px solid #c456c4;
+    border-right: 1px solid #c456c4;
+    border-top: none;
+    border-bottom: none;
+    pointer-events: none;
+    z-index: 888;
+    opacity: inherit;
+    position:absolute;
 }

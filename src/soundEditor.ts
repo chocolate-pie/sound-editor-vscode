@@ -369,8 +369,12 @@ export class SoundEditorProvider
                    </g>
                </svg>
 						 </span>
-					     <span class="control-top-zone">
+					     <span id="control-top-zone">
                    <span id="play-head"></span>
+                   <span id="trimmer">
+                       <span id="left-handle"></span>
+                       <span id="right-handle"></span>
+                   </span>
 						   </span>
 					</span>
 				    <span class="button-zone">

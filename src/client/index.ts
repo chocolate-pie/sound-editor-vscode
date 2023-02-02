@@ -5,7 +5,11 @@ import AudioEffects from "./audio-effects";
 import { analyze } from "./peak-analyzer";
 import { computeChunkedRMS } from "./utils/audio-utils";
 import * as WavEncoder from "./wav-encoder";
-const MIN_LENGTH = 0.01;
+declare global {
+  interface Window {
+    webkitAudioContext: new (contextOptions?: AudioContextOptions | undefined) => AudioContext;
+  }
+}
 type ValueOf<T> = T[keyof T];
 (() => {
   const vscode = acquireVsCodeApi();
@@ -19,8 +23,12 @@ type ValueOf<T> = T[keyof T];
       chunkLevels: null | number[],
       isTrimmerMouseDown: boolean;
     };
+    private containerState: {
+      isMouseDown: boolean,
+      isTrimStartRecognized: boolean
+    };
     constructor() {
-      this.context = new AudioContext();
+      this.context = (new AudioContext()) || (new window.webkitAudioContext());
       this.audioBufferPlayer = null;
       this.state = {
         trimStart: null,
@@ -28,6 +36,10 @@ type ValueOf<T> = T[keyof T];
         playHead: null,
         chunkLevels: null,
         isTrimmerMouseDown: false,
+      };
+      this.containerState = {
+        isMouseDown: false,
+        isTrimStartRecognized: false
       };
     }
     get metadata () {
@@ -129,7 +141,7 @@ type ValueOf<T> = T[keyof T];
     }
     handleEffect(name: ValueOf<typeof AudioEffects.effectTypes>) {
       const trimStart =
-        this.state.trimStart === null ? 0.0 : this.state.trimStart;
+        (this.state.trimStart === null ? 0.0 : this.state.trimStart);
       const trimEnd = this.state.trimEnd === null ? 1.0 : this.state.trimEnd;
 
       // Offline audio context needs at least 2 samples
@@ -139,8 +151,8 @@ type ValueOf<T> = T[keyof T];
       const effects = new AudioEffects(
         this.audioBufferPlayer!.buffer,
         name,
-        trimStart,
-        trimEnd
+        trimEnd > trimStart ? trimStart : trimEnd,
+        trimEnd > trimStart ? trimEnd : trimStart
       );
       effects.process((renderedBuffer, adjustedTrimStart, adjustedTrimEnd) => {
         const samples = renderedBuffer.getChannelData(0);
@@ -183,6 +195,57 @@ type ValueOf<T> = T[keyof T];
       }
       window.requestAnimationFrame(this.renderPlayButton.bind(this));
     }
+    onContainerMouseDown () {
+      if (this.state.trimStart === null) {
+          this.containerState.isMouseDown = true;
+      } else {
+        this.state = {
+          ...this.state,
+          trimStart: null,
+          trimEnd: null
+        };
+        document.getElementById("trimmer")!.style.opacity = "0";
+      }
+    }
+    onContainerMouseUp () {
+      this.containerState.isMouseDown = false;
+      this.containerState.isTrimStartRecognized = false;
+      console.log(this.state);
+    }
+    onContainerMouseMove (e: MouseEvent) {
+      if (!this.containerState.isMouseDown) {
+        return;
+      }
+      const _width = e.offsetX / (e.target as HTMLElement).getBoundingClientRect().width;
+      if (!this.containerState.isTrimStartRecognized) {
+        this.state = {
+          ...this.state,
+          trimStart: _width > 0.0 ? _width : 0.0,
+          trimEnd: _width > 0.0 ? _width : 0.0
+        };
+        this.containerState.isTrimStartRecognized = true;
+        this.renderTrimmer();
+      } else {
+        this.state = {
+          ...this.state,
+          trimEnd: _width > 0.0 ? _width : 0.0
+        };
+        this.renderTrimmer();
+      }
+    }
+    renderTrimmer () {
+      if ((this.state.trimEnd! > this.state.trimStart! ? (this.state.trimStart! * 100) : (this.state.trimEnd! * 100)) < 0) {
+        return;
+      }
+      if ((((Math.abs(this.state.trimEnd! - this.state.trimStart!))) * 100) > 100) {
+        return;
+      }
+      document.getElementById("trimmer")!.style.width = `${((Math.abs(this.state.trimEnd! - this.state.trimStart!))) * 100}%`;
+      document.getElementById("trimmer")!.style.left = `${(this.state.trimEnd! > this.state.trimStart! ? (this.state.trimStart! * 100) : (this.state.trimEnd! * 100))}%`;
+      document.getElementById("trimmer")!.style.opacity = "1";
+      document.getElementById("left-handle")!.style.opacity = "1";
+      document.getElementById("right-handle")!.style.opacity = "1";
+    }
   }
   const editor = new SoundEditorClient();
   window.addEventListener("message", async (e) => {
@@ -220,6 +283,9 @@ type ValueOf<T> = T[keyof T];
   document.getElementById("echo-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.ECHO)());
   document.getElementById("reverse-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.REVERSE)());
   document.getElementById("robot-effect")!.addEventListener("click", () => editor.effectFactory(AudioEffects.effectTypes.ROBOT)());
+  document.getElementById("control-top-zone")!.addEventListener("mousedown", () => editor.onContainerMouseDown());
+  document.getElementById("control-top-zone")!.addEventListener("mouseup", () => editor.onContainerMouseUp());
+  document.getElementById("control-top-zone")!.addEventListener("mousemove", (e) => editor.onContainerMouseMove(e as MouseEvent));
   document.getElementsByClassName("play-button")[0].addEventListener("click", () => editor.onPlayButtonClick());
   vscode.postMessage({ type: "ready" });
 })();
