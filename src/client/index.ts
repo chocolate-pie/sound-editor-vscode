@@ -5,6 +5,7 @@ import AudioEffects from "./audio-effects";
 import { analyze } from "./peak-analyzer";
 import { computeChunkedRMS } from "./utils/audio-utils";
 import * as WavEncoder from "./wav-encoder";
+import * as Mp3Encoder from "./mp3-encoder";
 declare global {
   interface Window {
     webkitAudioContext: new (contextOptions?: AudioContextOptions | undefined) => AudioContext;
@@ -116,12 +117,23 @@ type ValueOf<T> = T[keyof T];
     }
     getAudioData() {
       return new Promise((resolve: (buffer: Uint8Array) => void) => {
+        if (this.ext! === ".wav") {
         WavEncoder.encode({
           sampleRate: this.audioBufferPlayer!.buffer.sampleRate,
           channelData: [this.audioBufferPlayer!.buffer.getChannelData(0)],
         }).then((buffer: ArrayBuffer) => {
           resolve(new Uint8Array(buffer));
         });
+      } else {
+        // Its not work XD
+        Mp3Encoder.encode({
+           sampleRate: this.audioBufferPlayer!.buffer.sampleRate,
+           channels: this.audioBufferPlayer!.buffer.numberOfChannels,
+           samples: this.audioBufferPlayer!.buffer.getChannelData(0)
+        }).then((buffer: ArrayBuffer) => {
+          resolve(new Uint8Array(buffer));
+        });
+      }
       });
     }
     submitNewSamples(

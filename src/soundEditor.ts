@@ -319,6 +319,7 @@ export class SoundEditorProvider
         "client.js"
       )
     );
+    const lameUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "dist", "lame.min.js"));
 	const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "style", "index.css"));
 	const muteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--mute.svg"));
 	const robotUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--robot.svg"));
@@ -442,6 +443,7 @@ export class SoundEditorProvider
 					</span>
 					</span>
 				</div>
+        <script src="${lameUri}" nonce="${nonce}"></script>
 				<script src="${scriptMainUri}" nonce="${nonce}" ></script>
 			</body>
 			</html>`;

@@ -9,7 +9,7 @@ const encode = (arg: EncodeType) => {
     const kbps = 128;
     // @ts-ignore
     const lameInstance = new lamejs();
-    const mp3Encoder = new lameInstance.Mp3Encoder(channels, sampleRate, kbps);
+    const mp3Encoder = lameInstance.Mp3Encoder(channels, sampleRate, kbps);
     const sampleBlockSize = 1152;
     const mp3Data = [];
     const newSamples = convert(samples);
