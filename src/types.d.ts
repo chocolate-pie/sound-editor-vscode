@@ -1,2 +1,2 @@
 declare module "wav-encoder";
-declare module '*.svg'
+declare module "*.svg";

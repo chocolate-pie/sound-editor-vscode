@@ -255,7 +255,7 @@ export class SoundEditorProvider
           this.postMessage(webviewPanel, "init", {
             untitled: true,
             editable: true,
-            path: posix.extname(document.uri.fsPath)
+            path: posix.extname(document.uri.fsPath),
           });
         } else {
           const editable = vscode.workspace.fs.isWritableFileSystem(
@@ -319,24 +319,124 @@ export class SoundEditorProvider
         "client.js"
       )
     );
-    const lameUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "dist", "lame.min.js"));
-	const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "style", "index.css"));
-	const muteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--mute.svg"));
-	const robotUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--robot.svg"));
-	const reverseUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--reverse.svg"));
-	const louderUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--louder.svg"));
-	const softerUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--softer.svg"));
-	const fadeInUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--fade-in.svg"));
-	const fadeOutUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--fade-out.svg"));
-	const copyUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--copy.svg"));
-	const pasteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--paste.svg"));
-	const playUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--play.svg"));
-	const stopUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--stop.svg"));
-	const trimUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--trim.svg"));
-	const deleteUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--delete.svg"));
-	const fasterUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--faster.svg"));
-	const slowerUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--slower.svg"));
-  const echoUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, "assets", "icon--echo.svg"));
+    const lameUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._context.extensionUri, "dist", "lame.min.js")
+    );
+    const styleMainUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._context.extensionUri, "style", "index.css")
+    );
+    const muteUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--mute.svg"
+      )
+    );
+    const robotUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--robot.svg"
+      )
+    );
+    const reverseUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--reverse.svg"
+      )
+    );
+    const louderUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--louder.svg"
+      )
+    );
+    const softerUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--softer.svg"
+      )
+    );
+    const fadeInUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--fade-in.svg"
+      )
+    );
+    const fadeOutUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--fade-out.svg"
+      )
+    );
+    const copyUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--copy.svg"
+      )
+    );
+    const pasteUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--paste.svg"
+      )
+    );
+    const playUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--play.svg"
+      )
+    );
+    const stopUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--stop.svg"
+      )
+    );
+    const trimUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--trim.svg"
+      )
+    );
+    const deleteUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--delete.svg"
+      )
+    );
+    const fasterUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--faster.svg"
+      )
+    );
+    const slowerUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--slower.svg"
+      )
+    );
+    const echoUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        "assets",
+        "icon--echo.svg"
+      )
+    );
     const nonce = getNonce();
 
     return /* html */ `
@@ -348,7 +448,9 @@ export class SoundEditorProvider
 				Use a content security policy to only allow loading images from https or from our extension directory,
 				and only allow scripts that have a specific nonce.
 				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${
+          webview.cspSource
+        } blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${styleMainUri}" rel="stylesheet" />
 				<script id="metadata" type="application/json">
