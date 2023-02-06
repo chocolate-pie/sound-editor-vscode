@@ -586,6 +586,11 @@ export class SoundEditorProvider
         callback?.(message.body);
         return;
       }
+
+      case "error": {
+        vscode.window.showErrorMessage(message.body);
+        return;
+      }
     }
   }
 }

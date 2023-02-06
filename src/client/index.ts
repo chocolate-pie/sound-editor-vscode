@@ -187,8 +187,11 @@ type ValueOf<T> = T[keyof T];
             );
           }
           resolve(true);
-        }).catch((err) => {
-          // Fired Failure
+        }).catch((err: string) => {
+          vscode.postMessage({
+            type: "error",
+            body: err,
+          });
           resolve(false);
         });
       });
