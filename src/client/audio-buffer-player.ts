@@ -26,12 +26,17 @@ class AudioBufferPlayer {
     onEnded: AudioScheduledSourceNode["onended"]
   ) {
     this.updateCallback = onUpdate;
-    this.trimStart = trimStart;
-    this.trimEnd = trimEnd;
+    if (trimEnd > trimStart) {
+      this.trimStart = trimStart;
+      this.trimEnd = trimEnd;
+    } else {
+      this.trimStart = trimEnd;
+      this.trimEnd = trimStart;
+    }
     this.startTime = Date.now();
 
-    const trimStartTime = this.buffer.duration * trimStart;
-    const trimmedDuration = this.buffer.duration * trimEnd - trimStartTime;
+    const trimStartTime = this.buffer.duration * this.trimStart;
+    const trimmedDuration = this.buffer.duration * this.trimEnd - trimStartTime;
 
     this.source = this.audioContext.createBufferSource();
     this.source.onended = onEnded;

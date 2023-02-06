@@ -464,8 +464,8 @@ export class SoundEditorProvider
 			<body>
 				<div class="container">
 				    <span class="top-zone">
-					     <svg id="draw-canvas" viewBox="0 0 ${width} ${height}">
-                   <g transform="scale(1, -1) translate(0, -${height / 2})">
+					     <svg id="draw-canvas" viewBox="0 0 ${width * (750 / 600)} ${height}">
+                   <g transform="scale(1.25, -1) translate(0, -${height / 2})">
                         <path
                            d="M 0 0"
                            id="draw-path"
@@ -503,7 +503,7 @@ export class SoundEditorProvider
             </span>
 					     <span class="effect-button" id="fade-in-effect">
 						        <img src="${fadeInUri}" />
-								<p>mute</p>
+								<p>fade in</p>
 			             </span>
 						 <span class="effect-button" id="fade-out-effect">
 						        <img src="${fadeOutUri}" />
