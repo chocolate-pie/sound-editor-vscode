@@ -61,9 +61,7 @@
     "webpack-cli": "^5.0.0"
   },
   "dependencies": {
-    "flacjs": "github:Rillke/flac.js",
     "lamejs": "github:zhuker/lamejs",
-    "opusencjs": "github:Rillke/opusenc.js",
     "path-browserify": "^1.0.1"
   }
 }
