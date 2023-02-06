@@ -319,9 +319,6 @@ export class SoundEditorProvider
         "client.js"
       )
     );
-    const lameUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._context.extensionUri, "dist", "lame.min.js")
-    );
     const styleMainUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._context.extensionUri, "style", "index.css")
     );
@@ -545,7 +542,6 @@ export class SoundEditorProvider
 					</span>
 					</span>
 				</div>
-        <script src="${lameUri}" nonce="${nonce}"></script>
 				<script src="${scriptMainUri}" nonce="${nonce}" ></script>
 			</body>
 			</html>`;

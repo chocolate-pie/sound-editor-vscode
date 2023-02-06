@@ -3,7 +3,6 @@
 'use strict';
 
 const path = require('path');
-const copyWebpackPlugin = require('copy-webpack-plugin');
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -72,16 +71,6 @@ const clientExtensionConfig = {
     path: path.join(__dirname, "dist", "client"),
     filename: "client.js",
     libraryTarget: "umd",
-  },
-  plugins: [
-    new copyWebpackPlugin({
-      patterns: [
-        {
-          from: "node_modules/lamejs/lame.min.js",
-          to: path.resolve(__dirname, "./dist")
-        }
-      ]
-    })
-  ]
+  }
 };
 module.exports = [ extensionConfig, clientExtensionConfig ];

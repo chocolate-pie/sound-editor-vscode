@@ -1,4 +1,5 @@
 import { convert } from "./utils/float32array-to-int16array";
+import { Mp3Encoder } from "lamejs";
 type EncodeType = {
   channels: number;
   sampleRate: number;
@@ -7,9 +8,7 @@ type EncodeType = {
 const encode = (arg: EncodeType) => {
   const { samples, sampleRate, channels } = arg;
   const kbps = 128;
-  // @ts-ignore
-  const lameInstance = new lamejs();
-  const mp3Encoder = lameInstance.Mp3Encoder(channels, sampleRate, kbps);
+  const mp3Encoder = new Mp3Encoder(channels, sampleRate, kbps);
   const sampleBlockSize = 1152;
   const mp3Data = [];
   const newSamples = convert(samples);
