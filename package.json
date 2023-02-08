@@ -30,7 +30,9 @@
   "bugs": {
     "url": "https://github.com/chocolate-pie/sound-editor-vscode/issues/"
   },
-  "activationEvents": [],
+  "activationEvents": [
+    "onCustomEditor:SoundEditor.CoreSoundEditor"
+  ],
   "main": "./dist/extension.js",
   "browser": "./dist/web/extension.js",
   "contributes": {
