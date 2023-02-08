@@ -1,5 +1,5 @@
 <div align="center">
-   <img src="logo/logo.svg" width="150" height="150"/>
+   <img src="images/logo.png" width="150" height="150"/>
    <h2>Sound Editor for Visual Studio Code</h2>
    <h4>Visual Studio Code Extensions for Sound Editing. Based on <a href="https://github.com/llk/scratch-gui">scratch-gui</a></h4>
    <img src="https://img.shields.io/github/repo-size/chocolate-pie/sound-editor-vscode?style=for-the-badge" />
