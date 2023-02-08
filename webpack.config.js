@@ -3,6 +3,7 @@
 'use strict';
 
 const path = require('path');
+const webpack = require('webpack');
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -19,13 +20,11 @@ const extensionConfig = {
     libraryTarget: 'commonjs2'
   },
   externals: {
-    vscode: 'commonjs vscode'
+    vscode: 'commonjs vscode',
+    path: 'commonjs path'
   },
   resolve: {
-    extensions: ['.ts', '.js'],
-    fallback: {
-			path: require.resolve('path-browserify'),
-		},
+    extensions: ['.ts', '.js']
   },
   module: {
     rules: [
@@ -44,6 +43,50 @@ const extensionConfig = {
   infrastructureLogging: {
     level: "log", 
   },
+};
+/** @type WebpackConfig */
+const browserExtensionConfig = {
+  mode: 'none',
+  target: 'webworker',
+  entry: './src/extension.ts',
+  output: {
+    filename: 'extension.js',
+    path: path.join(__dirname, './dist/web'),
+    libraryTarget: 'commonjs',
+    devtoolModuleFilenameTemplate: '../../[resource-path]'
+  },
+  resolve: {
+    mainFields: ['browser', 'module', 'main'],
+    extensions: ['.ts', '.js'],
+    fallback: {
+      path: require.resolve('path-browserify')
+    }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader'
+          }
+        ]
+      }
+    ]
+  },
+  externals: {
+    vscode: 'commonjs vscode',
+  },
+  performance: {
+    hints: false,
+  },
+  devtool: 'nosources-source-map',
+  plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser'
+    })
+  ]
 };
 /** @type WebpackConfig */
 const clientExtensionConfig = {
@@ -73,4 +116,4 @@ const clientExtensionConfig = {
     libraryTarget: "umd",
   }
 };
-module.exports = [ extensionConfig, clientExtensionConfig ];
+module.exports = [ extensionConfig, browserExtensionConfig, clientExtensionConfig ];
