@@ -9,10 +9,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:sound-editor.helloWorld"
-  ],
+  "activationEvents": [],
   "main": "./dist/extension.js",
+  "browser": "./dist/web/extension.js",
   "contributes": {
     "customEditors": [
       {
@@ -53,6 +52,9 @@
     "copy-webpack-plugin": "^11.0.0",
     "eslint": "^8.28.0",
     "glob": "^8.0.3",
+    "gulp": "^4.0.2",
+    "gulp-raster": "^0.2.0",
+    "gulp-rename": "^2.0.0",
     "mocha": "^10.1.0",
     "prettier": "^2.8.3",
     "process": "^0.11.10",
