@@ -15,5 +15,5 @@
 ![Sound Editor Screen Shot](https://raw.githubusercontent.com/chocolate-pie/sound-editor-vscode/main/images/image01.png)
 
 ## Contribution 👪
-- If you found a plobrem, Please Create Issue on Github Repo.
+- If you found a problem, Please Create Issue on Github Repo.
 - If you like it, Please Give Star🎇 to Me ! I'm Encouraging 😎
