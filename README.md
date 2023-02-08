@@ -16,4 +16,4 @@
 
 ## Contribution 👪
 - If you found a plobrem, Please Create Issue on Github Repo.
-- If you like it, Please Give Star🎇 to Me ! I'm Encourging 😎
+- If you like it, Please Give Star🎇 to Me ! I'm Encouraging 😎
