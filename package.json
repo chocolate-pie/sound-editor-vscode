@@ -3,12 +3,33 @@
   "displayName": "Sound Editor",
   "description": "Sound Editor for VSCode",
   "version": "0.0.1",
+  "publisher": "chocolate-pie",
+  "license": "GPL 3-Clause License",
   "engines": {
     "vscode": "^1.74.0"
   },
+  "keywords": [
+    "sound-editor",
+    "editor",
+    "sound",
+    "audio"
+  ],
   "categories": [
     "Other"
   ],
+  "author": {
+    "name": "chocolate-pie",
+    "url": "https://github.com/chocolate-pie"
+  },
+  "icon": "images/logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chocolate-pie/sound-editor-vscode.git"
+  },
+  "homepage": "https://github.com/chocolate-pie/sound-editor-vscode",
+  "bugs": {
+    "url": "https://github.com/chocolate-pie/sound-editor-vscode/issues/"
+  },
   "activationEvents": [],
   "main": "./dist/extension.js",
   "browser": "./dist/web/extension.js",

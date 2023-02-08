@@ -5,5 +5,5 @@ gulp.task('default', () => {
      return gulp.src('./logo/*.svg')
     .pipe(raster())
     .pipe(rename({extname: '.png'}))
-    .pipe(gulp.dest('./dist'));
+    .pipe(gulp.dest('./images'));
 });
