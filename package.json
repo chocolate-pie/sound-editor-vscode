@@ -33,6 +33,12 @@
   "activationEvents": [
     "onCustomEditor:SoundEditor.CoreSoundEditor"
   ],
+  "resolutions": {
+    "minimist": ">=0.2.4",
+    "lodash.template": ">=4.5.0",
+    "trim-newlines": ">=3.0.1",
+    "glob-parent": ">=5.1.2"
+  },
   "main": "./dist/extension.js",
   "browser": "./dist/web/extension.js",
   "contributes": {
@@ -61,7 +67,8 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "format": "prettier --write ./src"
+    "format": "prettier --write ./src",
+    "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
@@ -79,6 +86,7 @@
     "gulp-raster": "^0.2.0",
     "gulp-rename": "^2.0.0",
     "mocha": "^10.1.0",
+    "npm-force-resolutions": "^0.0.10",
     "prettier": "^2.8.3",
     "process": "^0.11.10",
     "ts-loader": "^9.4.1",
