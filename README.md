@@ -4,6 +4,7 @@
    <h4>Visual Studio Code Extensions for Sound Editing. Based on <a href="https://github.com/llk/scratch-gui">scratch-gui</a></h4>
    <img src="https://img.shields.io/github/repo-size/chocolate-pie/sound-editor-vscode?style=for-the-badge" />
    <img src="https://img.shields.io/github/license/chocolate-pie/sound-editor-vscode?style=for-the-badge" />
+   <img src="https://shields.io/visual-studio-marketplace/i/chocolate-pie.sound-editor?style=for-the-badge" />
 </div>
 
 ## Features✨
