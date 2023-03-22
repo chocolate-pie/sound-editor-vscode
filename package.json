@@ -86,7 +86,7 @@
     "gulp-rename": "^2.0.0",
     "mocha": "^10.1.0",
     "npm-force-resolutions": "^0.0.10",
-    "prettier": "^2.8.3",
+    "prettier": "^2.8.6",
     "process": "^0.11.10",
     "ts-loader": "^9.4.1",
     "typescript": "^4.9.3",
