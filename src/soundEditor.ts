@@ -435,116 +435,115 @@ export class SoundEditorProvider
       )
     );
     const nonce = getNonce();
-
-    return /* html */ `
-			<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<!--
-				Use a content security policy to only allow loading images from https or from our extension directory,
-				and only allow scripts that have a specific nonce.
-				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${
-          webview.cspSource
-        } blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<link href="${styleMainUri}" rel="stylesheet" />
-				<script id="metadata" type="application/json">
-				    {
-						"play": "${playUri}",
-						"stop": "${stopUri}"
-					}
-				</script>
-				<title>Sound Editor</title>
-			</head>
-			<body>
-				<div class="container">
-				    <span class="top-zone">
-					     <svg id="draw-canvas" viewBox="0 0 ${width * (750 / 600)} ${height}">
-                   <g transform="scale(1.25, -1) translate(0, -${height / 2})">
-                        <path
-                           d="M 0 0"
-                           id="draw-path"
-                           strokeLinejoin="round"
-                           strokeWidth="1"
-                        />
-                   </g>
-               </svg>
-						 </span>
-					     <span id="control-top-zone">
-                   <span id="play-head"></span>
-                   <span id="trimmer">
-                       <span id="left-handle"></span>
-                       <span id="right-handle"></span>
-                   </span>
-						   </span>
-					</span>
-				    <span class="button-zone">
-					<span class="play-button">
-					     <img src="${playUri}" />
-					</span>
-					<span class="effect-button-container">
-					<span class="effect-button-container-main">
-            <span class="effect-button" id="copy-button">
-                   <img src="${copyUri}" />
-                   <p>copy</p>
+    return /* html */`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <!--
+          Use a content security policy to only allow loading images from https or from our extension directory,
+          and only allow scripts that have a specific nonce.
+          -->
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${
+            webview.cspSource
+          } blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link href="${styleMainUri}" rel="stylesheet" />
+          <script id="metadata" type="application/json">
+            {
+              "play": "${playUri}",
+              "stop": "${stopUri}"
+            }
+          </script>
+          <title>Sound Editor</title>
+        </head>
+        <body>
+          <div class="container">
+              <span class="top-zone">
+                <svg id="draw-canvas" viewBox="0 0 ${width * (750 / 600)} ${height}">
+                    <g transform="scale(1.25, -1) translate(0, -${height / 2})">
+                          <path
+                            d="M 0 0"
+                            id="draw-path"
+                            strokeLinejoin="round"
+                            strokeWidth="1"
+                          />
+                    </g>
+                </svg>
+              </span>
+              <span id="control-top-zone">
+                <span id="play-head"></span>
+                    <span id="trimmer">
+                    <span id="left-handle"></span>
+                    <span id="right-handle"></span>
+                </span>
+              </span>
             </span>
-            <span class="effect-button" id="paste-button">
-                   <img src="${pasteUri}" />
-                   <p>paste</p>
+            <span class="button-zone">
+            <span class="play-button">
+                <img src="${playUri}" />
             </span>
-            <span class="effect-button" id="delete-button">
-                   <img src="${deleteUri}" />
-                   <p>delete</p>
+            <span class="effect-button-container">
+            <span class="effect-button-container-main">
+              <span class="effect-button" id="copy-button">
+                    <img src="${copyUri}" />
+                    <p>copy</p>
+              </span>
+              <span class="effect-button" id="paste-button">
+                    <img src="${pasteUri}" />
+                    <p>paste</p>
+              </span>
+              <span class="effect-button" id="delete-button">
+                    <img src="${deleteUri}" />
+                    <p>delete</p>
+              </span>
+              <span class="effect-button" id="fade-in-effect">
+                    <img src="${fadeInUri}" />
+                    <p>fade in</p>
+              </span>
+              <span class="effect-button" id="fade-out-effect">
+                    <img src="${fadeOutUri}" />
+                    <p>fade out</p>
+              </span>
+              <span class="effect-button" id="louder-effect">
+                    <img src="${louderUri}" />
+                    <p>louder</p>
+              </span>
+              <span class="effect-button" id="softer-effect">
+                    <img src="${softerUri}" />
+                    <p>softer</p>
+              </span>
+              <span class="effect-button" id="faster-effect">
+                    <img src="${fasterUri}" />
+                    <p>faster</p>
+              </span>
+              <span class="effect-button" id="slower-effect">
+                    <img src="${slowerUri}" />
+                    <p>slower</p>
+              </span>
+              <span class="effect-button" id="robot-effect">
+                    <img src="${robotUri}" />
+                    <p>robot</p>
+              </span>
+              <span class="effect-button" id="mute-effect">
+                    <img src="${muteUri}" />
+                    <p>mute</p>
+              </span>
+              <span class="effect-button" id="echo-effect">
+                    <img src="${echoUri}" />
+                    <p>echo</p>
+              </span>
+              <span class="effect-button" id="reverse-effect">
+                    <img src="${reverseUri}" />
+                    <p>reverse</p>
+              </span>
+              </span>
             </span>
-					     <span class="effect-button" id="fade-in-effect">
-						        <img src="${fadeInUri}" />
-								<p>fade in</p>
-			             </span>
-						 <span class="effect-button" id="fade-out-effect">
-						        <img src="${fadeOutUri}" />
-								<p>fade out</p>
-			             </span>
-						 <span class="effect-button" id="louder-effect">
-							    <img src="${louderUri}" />
-								<p>louder</p>
-						 </span>
-						 <span class="effect-button" id="softer-effect">
-							    <img src="${softerUri}" />
-								<p>softer</p>
-						 </span>
-						 <span class="effect-button" id="faster-effect">
-							    <img src="${fasterUri}" />
-								<p>faster</p>
-						 </span>
-						 <span class="effect-button" id="slower-effect">
-							    <img src="${slowerUri}" />
-								<p>slower</p>
-						 </span>
-						 <span class="effect-button" id="robot-effect">
-							    <img src="${robotUri}" />
-								<p>robot</p>
-						 </span>
-						 <span class="effect-button" id="mute-effect">
-							    <img src="${muteUri}" />
-								<p>mute</p>
-						 </span>
-             <span class="effect-button" id="echo-effect">
-							    <img src="${echoUri}" />
-								<p>echo</p>
-						 </span>
-             <span class="effect-button" id="reverse-effect">
-							    <img src="${reverseUri}" />
-								<p>reverse</p>
-						 </span>
-				    </span>
-					</span>
-					</span>
-				</div>
-				<script src="${scriptMainUri}" nonce="${nonce}" ></script>
-			</body>
-			</html>`;
+            </span>
+          </div>
+          <script src="${scriptMainUri}" nonce="${nonce}" ></script>
+        </body>
+        </html>`;
   }
 
   private _requestId = 1;

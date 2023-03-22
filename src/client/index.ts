@@ -3,7 +3,11 @@
 import AudioBufferPlayer from "./audio-buffer-player";
 import AudioEffects from "./audio-effects";
 import { analyze } from "./peak-analyzer";
-import { computeChunkedRMS, dropEveryOtherSample, downsampleIfNeeded } from "./utils/audio-utils";
+import {
+  computeChunkedRMS,
+  dropEveryOtherSample,
+  downsampleIfNeeded,
+} from "./utils/audio-utils";
 import * as WavEncoder from "./wav-encoder";
 import * as Mp3Encoder from "./mp3-encoder";
 declare global {
@@ -11,8 +15,8 @@ declare global {
     webkitAudioContext: new (
       contextOptions?: AudioContextOptions | undefined
     ) => AudioContext;
-    }
-};
+  }
+}
 type ValueOf<T> = T[keyof T];
 (() => {
   const vscode = acquireVsCodeApi();
@@ -159,41 +163,46 @@ type ValueOf<T> = T[keyof T];
     ) {
       skipUndo = typeof skipUndo === "undefined" ? false : skipUndo;
       return new Promise((resolve) => {
-        downsampleIfNeeded({ samples, sampleRate }, this.resampleBufferToRate.bind(this)).then(({samples: newSamples, sampleRate: newSampleRate}) => {
-          if (skipUndo === false) {
-            // Bugzilla Error: client.js:819 Uncaught (in promise) RangeError: offset is out of bounds;
-            // @see https://bugzilla.mozilla.org/show_bug.cgi?id=1245495
-            // this.audioBufferPlayer!.buffer.getChannelData(0).set(samples);
-            const newBuffer = this.context.createBuffer(
-              1,
-              newSamples.length,
-              newSampleRate
-            );
-            newBuffer.getChannelData(0).set(newSamples);
-            this.audioBufferPlayer!.buffer = newBuffer;
+        downsampleIfNeeded(
+          { samples, sampleRate },
+          this.resampleBufferToRate.bind(this)
+        )
+          .then(({ samples: newSamples, sampleRate: newSampleRate }) => {
+            if (skipUndo === false) {
+              // Bugzilla Error: client.js:819 Uncaught (in promise) RangeError: offset is out of bounds;
+              // @see https://bugzilla.mozilla.org/show_bug.cgi?id=1245495
+              // this.audioBufferPlayer!.buffer.getChannelData(0).set(samples);
+              const newBuffer = this.context.createBuffer(
+                1,
+                newSamples.length,
+                newSampleRate
+              );
+              newBuffer.getChannelData(0).set(newSamples);
+              this.audioBufferPlayer!.buffer = newBuffer;
+              vscode.postMessage({
+                type: "audio",
+                channel: Array.from(newSamples),
+              });
+              this.state = {
+                ...this.state,
+                chunkLevels: computeChunkedRMS(
+                  this.audioBufferPlayer!.buffer.getChannelData(0)
+                ),
+              };
+              analyze(
+                this.state.chunkLevels!,
+                document.getElementById("draw-path") as any
+              );
+            }
+            resolve(true);
+          })
+          .catch((err: string) => {
             vscode.postMessage({
-              type: "audio",
-              channel: Array.from(newSamples),
+              type: "error",
+              body: err,
             });
-            this.state = {
-              ...this.state,
-              chunkLevels: computeChunkedRMS(
-                this.audioBufferPlayer!.buffer.getChannelData(0)
-              ),
-            };
-            analyze(
-              this.state.chunkLevels!,
-              document.getElementById("draw-path") as any
-            );
-          }
-          resolve(true);
-        }).catch((err: string) => {
-          vscode.postMessage({
-            type: "error",
-            body: err,
+            resolve(false);
           });
-          resolve(false);
-        });
       });
     }
     handleEffect(name: ValueOf<typeof AudioEffects.effectTypes>) {
@@ -367,8 +376,15 @@ type ValueOf<T> = T[keyof T];
         document.getElementById("trimmer")!.style.opacity = "0";
       });
     }
-    resampleBufferToRate (buffer: { samples: Float32Array, sampleRate: number}, newRate: number) {
-      return new Promise((resolve: (arg: { samples: Float32Array, sampleRate: number}) => void, reject) => {
+    resampleBufferToRate(
+      buffer: { samples: Float32Array; sampleRate: number },
+      newRate: number
+    ) {
+      return new Promise(
+        (
+          resolve: (arg: { samples: Float32Array; sampleRate: number }) => void,
+          reject
+        ) => {
           const sampleRateRatio = newRate / buffer.sampleRate;
           const newLength = sampleRateRatio * buffer.samples.length;
           let offlineContext: OfflineAudioContext | undefined;
@@ -376,33 +392,46 @@ type ValueOf<T> = T[keyof T];
           // The constructors will throw if trying to resample at an unsupported rate
           // (e.g. Safari/webkitOAC does not support lower than 44khz).
           try {
-              if (window.OfflineAudioContext) {
-                  offlineContext = new window.OfflineAudioContext(1, newLength, newRate);
-                  // @ts-expect-error
-              } else if (window.webkitOfflineAudioContext) {
-                  // @ts-expect-error
-                  offlineContext = new window.webkitOfflineAudioContext(1, newLength, newRate);
-              }
+            if (window.OfflineAudioContext) {
+              offlineContext = new window.OfflineAudioContext(
+                1,
+                newLength,
+                newRate
+              );
+              // @ts-expect-error
+            } else if (window.webkitOfflineAudioContext) {
+              // @ts-expect-error
+              offlineContext = new window.webkitOfflineAudioContext(
+                1,
+                newLength,
+                newRate
+              );
+            }
           } catch {
-              // If no OAC available and downsampling by 2, downsample by dropping every other sample.
-              if (newRate === buffer.sampleRate / 2) {
-                  return resolve(dropEveryOtherSample(buffer));
-              }
-              return reject(new Error('Could not resample'));
+            // If no OAC available and downsampling by 2, downsample by dropping every other sample.
+            if (newRate === buffer.sampleRate / 2) {
+              return resolve(dropEveryOtherSample(buffer));
+            }
+            return reject(new Error("Could not resample"));
           }
           const source = offlineContext!.createBufferSource();
-          const audioBuffer = offlineContext!.createBuffer(1, buffer.samples.length, buffer.sampleRate);
+          const audioBuffer = offlineContext!.createBuffer(
+            1,
+            buffer.samples.length,
+            buffer.sampleRate
+          );
           audioBuffer.getChannelData(0).set(buffer.samples);
           source.buffer = audioBuffer;
           source.connect(offlineContext!.destination);
           source.start();
           offlineContext!.startRendering().then((renderedBuffer) => {
-              resolve({
-                  samples: renderedBuffer.getChannelData(0),
-                  sampleRate: newRate
-              });
+            resolve({
+              samples: renderedBuffer.getChannelData(0),
+              sampleRate: newRate,
+            });
           });
-      });
+        }
+      );
     }
     onPlayButtonClick() {
       if (this.state.playHead !== null) {

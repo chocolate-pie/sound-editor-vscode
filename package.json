@@ -67,8 +67,7 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "format": "prettier --write ./src",
-    "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions"
+    "format": "prettier --write ./src"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
