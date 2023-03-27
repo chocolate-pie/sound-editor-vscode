@@ -6,7 +6,7 @@ import { width, height } from "./client/peak-analyzer";
 import { posix } from "path";
 
 interface SoundEdit {
-  readonly channel: ReadonlyArray<number>;
+  readonly channel: ArrayLike<number>;
 }
 
 interface SoundDocumentDelegate {

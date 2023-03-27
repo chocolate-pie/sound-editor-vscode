@@ -181,7 +181,7 @@ type ValueOf<T> = T[keyof T];
               this.audioBufferPlayer!.buffer = newBuffer;
               vscode.postMessage({
                 type: "audio",
-                channel: Array.from(newSamples),
+                channel: newSamples,
               });
               this.state = {
                 ...this.state,
