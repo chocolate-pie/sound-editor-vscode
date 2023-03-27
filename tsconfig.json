@@ -1,29 +1,24 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "ES2020",
-		"lib": [
-			"ES2020",
-			"DOM"
-		],
-		"sourceMap": true,
-		"rootDir": ".",
-		"esModuleInterop": true,
-		"strict": true,   /* enable all strict type-checking options */
-		"types": [
-            "node",
-			"@wdio/globals/types",
-            "@wdio/mocha-framework",
-            "expect-webdriverio",
-            "wdio-vscode-service",
-			"@types/vscode-webview"
-        ],
-		/* Additional Checks */
-		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-		// "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-		// "noUnusedParameters": true,  /* Report errors on unused parameters. */
-	},
-	"exclude": [
-		"src/test/**/*.ts"
-	]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
+    "sourceMap": true,
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "strict": true /* enable all strict type-checking options */,
+    "types": [
+      "node",
+      "@wdio/globals/types",
+      "@wdio/mocha-framework",
+      "expect-webdriverio",
+      "wdio-vscode-service",
+      "@types/vscode-webview"
+    ]
+    /* Additional Checks */
+    // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
+    // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
+    // "noUnusedParameters": true,  /* Report errors on unused parameters. */
+  },
+  "exclude": ["src/test/**/*.ts"]
 }

@@ -8,13 +8,16 @@
 </div>
 
 ## Features✨
+
 - Support Two Audio Formats (WAVE / MP3)
 - Support Browser
 - Support 10 Effects (FADEIN / FADEOUT / ECHO / REVERSE / LOUDER / SOFTER / FASTER / SLOWER / ROBOT / MUTE)
 
 ## Screen Shot 📷
+
 ![Sound Editor Screen Shot](https://raw.githubusercontent.com/chocolate-pie/sound-editor-vscode/main/images/image01.png)
 
 ## Contribution 👪
+
 - If you found a problem, Please Create Issue on Github Repo.
 - If you like it, Please Give Star🎇 to Me ! I'm Encouraging 😎

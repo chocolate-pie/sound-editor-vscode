@@ -435,7 +435,7 @@ export class SoundEditorProvider
       )
     );
     const nonce = getNonce();
-    return /* html */`
+    return /* html */ `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -446,7 +446,9 @@ export class SoundEditorProvider
           -->
           <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${
             webview.cspSource
-          } blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          } blob:; style-src ${
+      webview.cspSource
+    }; script-src 'nonce-${nonce}';">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="${styleMainUri}" rel="stylesheet" />
           <script id="metadata" type="application/json">
@@ -460,7 +462,9 @@ export class SoundEditorProvider
         <body>
           <div class="container">
               <span class="top-zone">
-                <svg id="draw-canvas" viewBox="0 0 ${width * (750 / 600)} ${height}">
+                <svg id="draw-canvas" viewBox="0 0 ${
+                  width * (750 / 600)
+                } ${height}">
                     <g transform="scale(1.25, -1) translate(0, -${height / 2})">
                           <path
                             d="M 0 0"
