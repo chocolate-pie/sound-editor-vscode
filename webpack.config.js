@@ -1,30 +1,30 @@
 //@ts-check
 
-'use strict';
+"use strict";
 
-const path = require('path');
-const webpack = require('webpack');
+const path = require("path");
+const webpack = require("webpack");
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
 
 /** @type WebpackConfig */
 const extensionConfig = {
-  target: 'node', 
-	mode: 'none', 
+  target: "node",
+  mode: "none",
 
-  entry: './src/extension.ts', 
+  entry: "./src/extension.ts",
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'extension.js',
-    libraryTarget: 'commonjs2'
+    path: path.resolve(__dirname, "dist"),
+    filename: "extension.js",
+    libraryTarget: "commonjs2",
   },
   externals: {
-    vscode: 'commonjs vscode',
-    path: 'commonjs path'
+    vscode: "commonjs vscode",
+    path: "commonjs path",
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: [".ts", ".js"],
   },
   module: {
     rules: [
@@ -33,34 +33,34 @@ const extensionConfig = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'ts-loader'
-          }
-        ]
-      }
-    ]
+            loader: "ts-loader",
+          },
+        ],
+      },
+    ],
   },
-  devtool: 'nosources-source-map',
+  devtool: "nosources-source-map",
   infrastructureLogging: {
-    level: "log", 
+    level: "log",
   },
 };
 /** @type WebpackConfig */
 const browserExtensionConfig = {
-  mode: 'none',
-  target: 'webworker',
-  entry: './src/extension.ts',
+  mode: "none",
+  target: "webworker",
+  entry: "./src/extension.ts",
   output: {
-    filename: 'extension.js',
-    path: path.join(__dirname, './dist/web'),
-    libraryTarget: 'commonjs',
-    devtoolModuleFilenameTemplate: '../../[resource-path]'
+    filename: "extension.js",
+    path: path.join(__dirname, "./dist/web"),
+    libraryTarget: "commonjs",
+    devtoolModuleFilenameTemplate: "../../[resource-path]",
   },
   resolve: {
-    mainFields: ['browser', 'module', 'main'],
-    extensions: ['.ts', '.js'],
+    mainFields: ["browser", "module", "main"],
+    extensions: [".ts", ".js"],
     fallback: {
-      path: require.resolve('path-browserify')
-    }
+      path: require.resolve("path-browserify"),
+    },
   },
   module: {
     rules: [
@@ -69,30 +69,30 @@ const browserExtensionConfig = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'ts-loader'
-          }
-        ]
-      }
-    ]
+            loader: "ts-loader",
+          },
+        ],
+      },
+    ],
   },
   externals: {
-    vscode: 'commonjs vscode',
+    vscode: "commonjs vscode",
   },
   performance: {
     hints: false,
   },
-  devtool: 'nosources-source-map',
+  devtool: "nosources-source-map",
   plugins: [
     new webpack.ProvidePlugin({
-      process: 'process/browser'
-    })
-  ]
+      process: "process/browser",
+    }),
+  ],
 };
 /** @type WebpackConfig */
 const clientExtensionConfig = {
   target: "web",
   mode: "none",
-  devtool: 'nosources-source-map',
+  devtool: "nosources-source-map",
   module: {
     rules: [
       {
@@ -100,20 +100,24 @@ const clientExtensionConfig = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'ts-loader'
-          }
-        ]
-      }
-    ]
+            loader: "ts-loader",
+          },
+        ],
+      },
+    ],
   },
   resolve: {
-    extensions: ['.ts', ".js"]
+    extensions: [".ts", ".js"],
   },
   entry: "./src/client/index.ts",
   output: {
     path: path.join(__dirname, "dist", "client"),
     filename: "client.js",
     libraryTarget: "umd",
-  }
+  },
 };
-module.exports = [ extensionConfig, browserExtensionConfig, clientExtensionConfig ];
+module.exports = [
+  extensionConfig,
+  browserExtensionConfig,
+  clientExtensionConfig,
+];

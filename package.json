@@ -67,7 +67,8 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "format": "prettier --write ./src"
+    "format": "prettier --write ./src",
+    "format-all": "prettier --write **/*.{js,json,md}"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
