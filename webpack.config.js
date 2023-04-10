@@ -4,6 +4,7 @@
 
 const path = require("path");
 const webpack = require("webpack");
+const pkg = require("./package.json");
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -43,6 +44,13 @@ const extensionConfig = {
   infrastructureLogging: {
     level: "log",
   },
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: `${pkg.displayName} v${pkg.version} (${pkg.license})`,
+      entryOnly: true,
+      raw: false,
+    })
+  ]
 };
 /** @type WebpackConfig */
 const browserExtensionConfig = {
@@ -86,6 +94,11 @@ const browserExtensionConfig = {
     new webpack.ProvidePlugin({
       process: "process/browser",
     }),
+    new webpack.BannerPlugin({
+      banner: `${pkg.displayName} v${pkg.version} (${pkg.license})`,
+      entryOnly: true,
+      raw: false,
+    })
   ],
 };
 /** @type WebpackConfig */
@@ -115,6 +128,13 @@ const clientExtensionConfig = {
     filename: "client.js",
     libraryTarget: "umd",
   },
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: `${pkg.displayName} v${pkg.version} (${pkg.license})`,
+      entryOnly: true,
+      raw: false,
+    })
+  ]
 };
 module.exports = [
   extensionConfig,
