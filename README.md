@@ -1,3 +1,6 @@
+> **🚨 This extentension was marked as deprecated 🚨** <br />
+> This extension is no longer maintained and Github repository has been archived. Sorry for the inconvenience.
+
 <div align="center">
    <img src="https://raw.githubusercontent.com/chocolate-pie/sound-editor-vscode/main/images/logo.png" width="150" height="150"/>
    <h2>Sound Editor for Visual Studio Code</h2>
@@ -9,15 +12,11 @@
 
 ## Features✨
 
-- Support Two Audio Formats (WAVE / MP3)
-- Support Browser
-- Support 10 Effects (FADEIN / FADEOUT / ECHO / REVERSE / LOUDER / SOFTER / FASTER / SLOWER / ROBOT / MUTE)
+- Support two audio formats (wav / mp3)
+- Support browser
+- Support 10 effects (fade-in, fade-out, mute, and so on!)
 
 ## Screen Shot 📷
 
 ![Sound Editor Screen Shot](https://raw.githubusercontent.com/chocolate-pie/sound-editor-vscode/main/images/image01.png)
 
-## Contribution 👪
-
-- If you found a problem, Please Create Issue on Github Repo.
-- If you like it, Please Give Star🎇 to Me ! I'm Encouraging 😎
